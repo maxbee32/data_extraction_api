@@ -2,7 +2,6 @@ import datetime
 import numpy as np
 import pandas as pd
 import pyodbc
-import requests
 from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 from operator import itemgetter
@@ -86,8 +85,8 @@ async def connect_database(credentials: DatabaseCredentials):
             connection_pool.release_connection(connection)
 
 
-# Store progress percentage globally
-progress_percentage = 0
+# # Store progress percentage globally
+# progress_percentage = 0
 
 
 # Define a loading screen class
@@ -206,7 +205,7 @@ def check_excel_data(data: ExcelData):
         df = pd.read_excel(data.file_path, engine='openpyxl')
 
         # Handle NULL values in the DataFrame
-        df.replace({pd.NA: None}, inplace=True)
+        df.replace({np.nan: None}, inplace=True)
 
         # Check if data already exists in the table
         submission_periods = df['Submission_Period'].tolist()
@@ -224,7 +223,7 @@ def check_excel_data(data: ExcelData):
 
 
 @app.post("/check-and-insert-excel")
-def check_and_insert_excel_data(data: ExcelData, reinsert_data: str = "yes"):
+def check_and_insert_excel_data(data: ExcelData):
     global sql_command, progress_percentage
     try:
         # Check if database connection is established
